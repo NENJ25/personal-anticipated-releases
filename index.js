@@ -1,9 +1,9 @@
-$.getJSON("https://raw.githubusercontent.com/NJimp96/tbr-anticipated-releases/main/data/tbr_past_month.json")
+$.getJSON("https://raw.githubusercontent.com/NENJ25/personal-anticipated-releases/refs/heads/main/data/tbr_past_month.json")
 .done(function( data ) {
     document.getElementById("shelf_month").innerHTML = data.map(bookCard).join("")
 });
 
-$.getJSON("https://raw.githubusercontent.com/NJimp96/tbr-anticipated-releases/main/data/tbr_coming_week.json")
+$.getJSON("https://raw.githubusercontent.com/NENJ25/personal-anticipated-releases/refs/heads/main/data/tbr_coming_week.json")
 .done(function( data ) {
     document.getElementById("shelf_week").innerHTML = data.map(bookCard).join("")
 });
