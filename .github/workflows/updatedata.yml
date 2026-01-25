@@ -7,7 +7,7 @@ on:
    branches:
        main
  schedule:
-   - cron: '45 19 * * 0' # run at 10:30 on Sunday
+   - cron: '45 19 * * 0' # run at 10:45 on Sunday
 
 jobs:
  build:
@@ -29,6 +29,9 @@ jobs:
 
 
      - name: scrape goodreads
+       env:
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
        working-directory: ./py
        run: python main.py
 

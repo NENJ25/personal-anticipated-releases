@@ -1,7 +1,8 @@
-import os.path
+import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 
 import scraperutils as gsf
 from selenium_stealth import stealth
@@ -14,17 +15,42 @@ import time
 import json
 import re
 
+SIGNIN_URL = "https://www.goodreads.com/ap/signin?language=en_US&openid.assoc_handle=amzn_goodreads_web_na&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.goodreads.com%2Fap-handler%2Fsign-in&siteState=eyJyZXR1cm5fdXJsIjoiaHR0cHM6Ly93d3cuZ29vZHJlYWRzLmNvbS8ifQ%3D%3D"
 URL_TEMPLATE = "https://www.goodreads.com/review/list/8683189-ne?page=1&shelf=to-read"
 NUM_BOOKS_PER_PAGE = 20
 print("before driver set up")
 
 service = Service()
 options = webdriver.ChromeOptions()
-driver = webdriver.Chrome(service=service, options=options)
+web_driver = webdriver.Chrome(service=service, options=options)
 print("after driver set up")
 
+def signin_to_goodreads(driver: webdriver.Chrome):
+    try:
+        # Open the login page
+        driver.get(SIGNIN_URL)
 
-def scrape_tbr(url_temp):
+        # Find the email input field by ID and input your email
+        email_input = driver.find_element(By.ID, "ap_email")
+        email = os.getenv("USERNAME")
+        email_input.send_keys(email)
+
+        # Find the password input field by ID and input your password
+        password_input = driver.find_element(By.ID, "ap_password")
+        password = os.getenv("PASSWORD")
+        password_input.send_keys(password)
+
+        # Find the login button and submit the form
+        login_button = driver.find_element(By.ID, "signInSubmit")
+        login_button.click()
+
+        # Wait for the login process to complete
+        time.sleep(5)  # Adjust this depending on your site's response time
+    except:
+        print("login failed")
+
+
+def scrape_tbr(url_temp:str, driver: webdriver.Chrome):
     """This functions scrapes through a good reads book list and writes to json file sample_data with the
     list of books released in the past 30 days. Book data contains author, title, cover url, book url and
     the publication date of the chosen edition"""
@@ -77,4 +103,5 @@ def scrape_tbr(url_temp):
     return books_info, books_month, books_week
 
 if __name__ == "__main__":
-    scrape_tbr(URL_TEMPLATE)
+    signin_to_goodreads(web_driver)
+    scrape_tbr(URL_TEMPLATE, web_driver)
